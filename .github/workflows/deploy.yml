@@ -28,11 +28,9 @@ jobs:
 
       - name: Create zip file
         run: |
-          VERSION_LABEL="v${{ github.run_number }}-${{ github.run_id }}"
-          ZIP_NAME="${{ secrets.EB_APP_NAME }}-${VERSION_LABEL}.zip"
+          ZIP_NAME="${{ secrets.EB_APP_NAME }}-v${{ github.run_number }}.zip"
           zip -r "$ZIP_NAME" . -x "*.git*" "*.github*"
           echo "ZIP_NAME=$ZIP_NAME" >> $GITHUB_ENV
-          echo "VERSION_LABEL=$VERSION_LABEL" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
@@ -47,11 +45,12 @@ jobs:
           S3_BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${ACCOUNT_ID}"
           aws s3 cp "$ZIP_NAME" s3://$S3_BUCKET/"$ZIP_NAME"
 
-      - name: Create Elastic Beanstalk Application Version
+      - name: Create EB Application Version
         run: |
           ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           S3_BUCKET="elasticbeanstalk-${{ secrets.AWS_REGION }}-${ACCOUNT_ID}"
 
+          VERSION_LABEL="v-${{ github.run_number }}"
           aws elasticbeanstalk create-application-version \
             --application-name "${{ secrets.EB_APP_NAME }}" \
             --version-label "$VERSION_LABEL" \
@@ -59,6 +58,7 @@ jobs:
 
       - name: Deploy to Elastic Beanstalk
         run: |
+          VERSION_LABEL="v-${{ github.run_number }}"
           aws elasticbeanstalk update-environment \
             --environment-name "${{ secrets.EB_ENV_NAME }}" \
             --version-label "$VERSION_LABEL"
