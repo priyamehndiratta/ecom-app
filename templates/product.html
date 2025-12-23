@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<a href="/" class="btn btn-outline-secondary mb-3">&larr; Back</a>
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="{{ product.image_url }}"
+             class="img-fluid rounded shadow"
+             onerror="this.src='/static/placeholder.png'">
+    </div>
+
+    <div class="col-md-6">
+        <h2 class="fw-bold">{{ product.name }}</h2>
+        <p class="text-muted">{{ product.description }}</p>
+        <h3 class="text-success mb-4">₹ {{ product.price }}</h3>
+
+        <form action="/cart/add/{{ product.id }}" method="POST">
+            <button class="btn btn-warning btn-lg w-100">
+                Add to Cart
+            </button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

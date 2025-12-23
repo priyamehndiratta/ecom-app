@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h3 class="fw-bold text-primary">Your Cart</h3>
+
+{% if items %}
+<table class="table table-hover bg-white shadow-sm mt-3 rounded">
+    <thead class="table-primary">
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>
+                <img src="{{ item.product.image_url }}" width="60"
+                     class="me-2 rounded">
+                {{ item.product.name }}
+            </td>
+            <td>{{ item.qty }}</td>
+            <td class="fw-bold">₹ {{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="text-end">
+    <h4>Total: <span class="text-success fw-bold">₹ {{ total }}</span></h4>
+</div>
+
+<a href="/checkout" class="btn btn-success btn-lg mt-3">Proceed to Checkout</a>
+
+{% else %}
+<p class="text-muted">Your cart is empty.</p>
+{% endif %}
+{% endblock %}

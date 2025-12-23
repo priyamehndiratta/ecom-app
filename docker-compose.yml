@@ -1,0 +1,19 @@
+version: "3.11"
+
+services:
+  web:
+    build: .
+    container_name: flask-app
+    ports:
+      - "8010:5000"
+    env_file:
+      - .env
+    environment:
+      APP_ENV: ${APP_ENV}
+      SQLITE_DB_PATH: ${SQLITE_DB_PATH}
+      AWS_REGION: ${AWS_REGION}
+    volumes:
+      - .:/app             # mount project (code) so live edits reflect
+      - ./data:/app/data   # persist sqlite DB on host in ./data
+    command: >
+      sh -c "python init_db.py && python application.py"
